@@ -33,6 +33,7 @@
 import Data from '@/data/data.json'
 import MetroData from '@/data/metro.json'
 import MetroBarChart from '@/components/MetroBarChart.vue'
+import { getComplementedDate } from '@/utils/formatDate'
 
 export default {
   components: {
@@ -40,19 +41,20 @@ export default {
   },
   data() {
     // 都営地下鉄の利用者数の推移
-    const metroGraph = MetroData
-    for (const dataset of metroGraph.datasets) {
-      dataset.label = this.getWeekLabel(dataset.label)
+    const datasets = MetroData.datasets.map(d => ({
+      ...d,
+      label: this.getWeekLabel(d.label)
+    }))
+    const metroGraph = {
+      ...MetroData,
+      datasets
     }
 
     // metroGraph ツールチップ title文字列
     // this.$t を使うため metroGraphOption の外側へ
     const metroGraphTooltipTitle = (tooltipItems, _) => {
-      const label = this.getWeekLabel(tooltipItems[0].label)
-      return this.$t('期間: {duration}', {
-        // duration = label = '2月10日~14日' | '2月17日~21日' | '2月25日~28日'
-        duration: this.$t(label)
-      })
+      const duration = this.getWeekLabel(tooltipItems[0].label)
+      return this.$t('期間: {duration}', { duration })
     }
     // metroGraph ツールチップ label文字列
     // this.$t を使うため metroGraphOption の外側へ
@@ -61,19 +63,18 @@ export default {
       const percentage = `${currentData.data[tooltipItem.index]}%`
 
       return this.$t('{duration}の利用者数との相対値: {percentage}', {
-        // duration = metroGraph.base_period = '1月20日~1月24日'
+        // duration = metroGraph.base_period = '1\/20~1\/24'
         duration: this.$t(metroGraph.base_period),
         percentage
       })
     }
 
-    const data = {
+    return {
       Data,
       metroGraph,
       metroGraphTooltipTitle,
       metroGraphTooltipLabel
     }
-    return data
   },
   methods: {
     /**
@@ -101,10 +102,20 @@ export default {
         label = label.replace('~', `~${month}/`)
       }
 
-      // 日は、0埋めしない
-      label = label.replace('/0', '/')
-
-      return label
+      const dates = label.split('~')
+      if (slashCount === 1 && dates.length === 2) {
+        const from = this.$d(
+          new Date(getComplementedDate(dates[0])),
+          'dateWithoutYear'
+        )
+        const to = this.$d(
+          new Date(getComplementedDate(dates[1])),
+          'dateWithoutYear'
+        )
+        return `${from}~${to}`
+      } else {
+        return `${dates[0]}~${dates[1]}`
+      }
     }
   }
 }

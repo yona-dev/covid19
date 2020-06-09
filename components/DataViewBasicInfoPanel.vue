@@ -1,10 +1,10 @@
 <template>
   <div class="DataView-DataInfo">
-    <span class="DataView-DataInfo-summary">
+    <span v-if="lText !== ''" class="DataView-DataInfo-summary">
       {{ lText }}
       <small class="DataView-DataInfo-summary-unit">{{ unit }}</small>
     </span>
-    <br />
+    <br v-if="lText !== ''" />
     <small class="DataView-DataInfo-date">{{ sText }}</small>
   </div>
 </template>
@@ -19,22 +19,25 @@
 
     &-summary {
       display: inline-block;
+      color: $gray-2;
+      white-space: nowrap;
       font-family: Hiragino Sans, sans-serif;
       font-style: normal;
-      font-size: 30px;
       line-height: 30px;
+      @include font-size(30);
 
       &-unit {
-        font-size: 0.6em;
+        width: 100%;
+        @include font-size(18);
       }
     }
 
     &-date {
-      white-space: wrap;
       display: inline-block;
-      font-size: 12px;
-      line-height: 12px;
+      width: 100%;
       color: $gray-3;
+      line-height: initial;
+      @include font-size(12);
     }
   }
 }
@@ -47,7 +50,8 @@ export default Vue.extend({
   props: {
     lText: {
       type: String,
-      required: true
+      required: false,
+      default: ''
     },
     sText: {
       type: String,
@@ -55,7 +59,8 @@ export default Vue.extend({
     },
     unit: {
       type: String,
-      required: true
+      required: false,
+      default: ''
     }
   }
 })

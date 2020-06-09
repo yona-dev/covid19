@@ -8,7 +8,17 @@
       :date="Data.querents.date"
       :unit="$t('件.reports')"
       :url="'https://catalog.data.metro.tokyo.lg.jp/dataset/t000010d0000000070'"
-    />
+    >
+      <template v-slot:attentionNote>
+        <p>
+          {{
+            $t(
+              '本グラフは、5月22日より「モニタリング指標（７）受診相談窓口における相談件数」のグラフを掲載していることから、データが重複するため、6月15日をもって削除いたします。'
+            )
+          }}
+        </p>
+      </template>
+    </time-bar-chart>
     <!-- 件.reports = 窓口相談件数 -->
   </v-col>
 </template>
@@ -26,11 +36,10 @@ export default {
     // 帰国者・接触者 電話相談センター 相談件数
     const querentsGraph = formatGraph(Data.querents.data)
 
-    const data = {
+    return {
       Data,
       querentsGraph
     }
-    return data
   }
 }
 </script>

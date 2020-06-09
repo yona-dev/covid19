@@ -5,15 +5,21 @@
       :title-id="'details-of-tested-cases'"
       :date="Data.inspection_status_summary.date"
     >
-      <template v-slot:button>
-        <ul :class="$style.notes">
-          <li>
-            {{ $t('（注）医療機関が保険適用で行った検査は含まれていない') }}
-          </li>
+      <template v-slot:attentionNote>
+        <p>
+          {{
+            $t(
+              '本グラフは、5月8日より「検査実施件数」のグラフで健康安全研究センターが行った検査件数と医療機関等が行った件数の内訳を掲載していること、5月13日より「検査実施人数（陰性確認を除く）と陽性率の推移」（現在の「モニタリング指標(6)PCR検査の陽性率」）のグラフで検査実施人数を掲載していることから、データが重複するため、6月15日をもって削除いたします。'
+            )
+          }}
+        </p>
+      </template>
+      <template v-slot:description>
+        <ul class="ListStyleNone">
           <li>
             {{
               $t(
-                '（注）検査実施人数には、チャーター機帰国者、クルーズ船乗客等は含まれていない'
+                '（注）検査実施人数には、医療機関等による検査人数、チャーター機帰国者、クルーズ船乗客等は含まれていない。'
               )
             }}
           </li>
@@ -34,20 +40,6 @@
   </v-col>
 </template>
 
-<style lang="scss" module>
-ul.notes {
-  margin-top: 10px;
-  margin-bottom: 0;
-  padding-left: 0 !important;
-  font-size: 12px;
-  color: $gray-3;
-
-  > li {
-    list-style-type: none;
-  }
-}
-</style>
-
 <script>
 import Data from '@/data/data.json'
 import formatTestedCases from '@/utils/formatTestedCases'
@@ -63,11 +55,10 @@ export default {
     // 検査陽性者の状況
     const testedCases = formatTestedCases(Data.inspection_status_summary)
 
-    const data = {
+    return {
       Data,
       testedCases
     }
-    return data
   }
 }
 </script>

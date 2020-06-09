@@ -15,7 +15,6 @@ const config: Configuration = {
     htmlAttrs: {
       prefix: 'og: http://ogp.me/ns#'
     },
-    titleTemplate: '%s | 東京都 新型コロナウイルス感染症対策サイト',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -53,7 +52,7 @@ const config: Configuration = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon-precomposed.png' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon-precomposed.png' }
     ]
   },
   /*
@@ -108,6 +107,7 @@ const config: Configuration = {
    */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    treeShake: true,
     defaultAssets: {
       icons: false
     }
@@ -170,13 +170,23 @@ const config: Configuration = {
         '/cards/details-of-confirmed-cases',
         '/cards/details-of-tested-cases',
         '/cards/number-of-confirmed-cases',
+        '/cards/number-of-confirmed-cases-by-municipalities',
         '/cards/attributes-of-confirmed-cases',
         '/cards/number-of-tested',
         '/cards/number-of-inspection-persons',
         '/cards/number-of-reports-to-covid19-telephone-advisory-center',
         '/cards/number-of-reports-to-covid19-consultation-desk',
         '/cards/predicted-number-of-toei-subway-passengers',
-        '/cards/agency'
+        '/cards/agency',
+        '/cards/positive-rate',
+        '/cards/positive-number-by-diagnosed-date',
+        '/cards/monitoring-number-of-confirmed-cases',
+        '/cards/untracked-rate',
+        '/cards/increase-ratio-of-confirmed-cases-by-daily',
+        '/cards/positive-status-severe-case',
+        '/cards/number-of-hospitalized',
+        '/cards/monitoring-number-of-reports-to-covid19-consultation-desk',
+        '/cards/monitoring-status-overview'
       ]
 
       const routes: string[] = []

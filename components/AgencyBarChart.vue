@@ -1,9 +1,7 @@
 <template>
   <data-view :title="title" :title-id="titleId" :date="date">
-    <template v-slot:infoPanel>
-      <small :class="$style.DataViewDesc">
-        <slot name="description" />
-      </small>
+    <template v-slot:description>
+      <slot name="description" />
     </template>
     <h4 :id="`${titleId}-graph`" class="visually-hidden">
       {{ $t(`{title}のグラフ`, { title }) }}
@@ -16,76 +14,53 @@
       :options="displayOption"
       :height="240"
     />
-    <v-data-table
-      :style="{ top: '-9999px', position: canvas ? 'fixed' : 'static' }"
-      :headers="tableHeaders"
-      :items="tableData"
-      :items-per-page="-1"
-      :hide-default-footer="true"
-      :height="240"
-      :fixed-header="true"
-      :disable-sort="true"
-      :mobile-breakpoint="0"
-      class="cardTable"
-      item-key="name"
-    />
+    <template v-slot:dataTable>
+      <data-view-table :headers="tableHeaders" :items="tableData" />
+    </template>
   </data-view>
 </template>
-
-<style module lang="scss">
-.DataView {
-  &Desc {
-    margin-top: 10px;
-    margin-bottom: 0 !important;
-    font-size: 12px;
-    color: $gray-3;
-  }
-}
-</style>
 
 <script lang="ts">
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { ChartOptions } from 'chart.js'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
-import agencyData from '@/data/agency.json'
+import AgencyData from '@/data/agency.json'
 import DataView from '@/components/DataView.vue'
+import DataViewTable, {
+  TableHeader,
+  TableItem
+} from '@/components/DataViewTable.vue'
 import { getGraphSeriesStyle } from '@/utils/colors'
+import { DisplayData, DataSets } from '@/plugins/vue-chart'
+
+interface AgencyDataSets extends DataSets {
+  label: string
+}
+interface AgencyDisplayData extends DisplayData {
+  datasets: AgencyDataSets[]
+}
 
 interface HTMLElementEvent<T extends HTMLElement> extends MouseEvent {
   currentTarget: T
 }
 type Data = {
   canvas: boolean
-  chartData: typeof agencyData
-  date: string
   agencies: VueI18n.TranslateResult[]
 }
 type Methods = {}
 type Computed = {
-  displayData: {
-    labels: string[]
-    datasets: {
-      label: string
-      data: number[]
-      backgroundColor: string
-      borderColor: string
-      borderWidth: number
-    }[]
-  }
+  displayData: AgencyDisplayData
   displayOption: ChartOptions
-  tableHeaders: {
-    text: VueI18n.TranslateResult
-    value: string
-  }[]
-  tableData: {
-    [key: number]: number
-  }[]
+  tableHeaders: TableHeader[]
+  tableData: TableItem[]
 }
 type Props = {
   title: string
   titleId: string
   chartId: string
+  chartData: typeof AgencyData
+  date: string
   unit: string
 }
 
@@ -99,7 +74,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   created() {
     this.canvas = process.browser
   },
-  components: { DataView },
+  components: { DataView, DataViewTable },
   props: {
     title: {
       type: String,
@@ -116,6 +91,11 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       required: false,
       default: 'agency-bar-chart'
     },
+    chartData: Object,
+    date: {
+      type: String,
+      default: ''
+    },
     unit: {
       type: String,
       required: false,
@@ -131,8 +111,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
 
     return {
       canvas: true,
-      chartData: agencyData,
-      date: agencyData.date,
       agencies
     }
   },
@@ -225,21 +203,23 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       return [
         { text: this.$t('日付'), value: 'text' },
         ...this.displayData.datasets.map((text, value) => {
-          return { text: text.label, value: String(value) }
+          return { text: text.label, value: String(value), align: 'end' }
         })
       ]
     },
     tableData() {
-      return this.displayData.datasets[0].data.map((_, i) => {
-        return Object.assign(
-          { text: this.displayData.labels[i] as string },
-          ...this.displayData.datasets!.map((_, j) => {
-            return {
-              [j]: this.displayData.datasets[0].data[i]
-            }
-          })
-        )
-      })
+      return this.displayData.datasets[0].data
+        .map((_, i) => {
+          return Object.assign(
+            { text: this.displayData.labels![i] },
+            ...this.displayData.datasets!.map((_, j) => {
+              return {
+                [j]: this.displayData.datasets[j].data[i].toLocaleString()
+              }
+            })
+          )
+        })
+        .reverse()
     }
   },
   mounted() {

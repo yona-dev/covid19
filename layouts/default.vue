@@ -8,7 +8,7 @@
     </v-overlay>
     <div v-if="hasNavigation" class="appContainer">
       <div class="naviContainer">
-        <SideNavigation
+        <side-navigation
           :is-navi-open="isOpenNavigation"
           :class="{ open: isOpenNavigation }"
           @openNavi="openNavigation"
@@ -26,7 +26,7 @@
         <nuxt />
       </v-container>
     </div>
-    <NoScript />
+    <no-script />
     <development-mode-mark />
   </v-app>
 </template>
@@ -34,8 +34,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { MetaInfo } from 'vue-meta'
-import Data from '@/data/data.json'
 import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
+import Data from '@/data/data.json'
 import SideNavigation from '@/components/SideNavigation.vue'
 import NoScript from '@/components/NoScript.vue'
 import DevelopmentModeMark from '@/components/DevelopmentModeMark.vue'
@@ -111,6 +111,9 @@ export default Vue.extend({
           href: 'https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css'
         }
       ],
+      // Disable prettier for readability purposes
+      // eslint-disable-next-line prettier/prettier
+      titleTemplate: `%s | ${this.$t('東京都')} ${this.$t('新型コロナウイルス感染症')}${this.$t('対策サイト')}`,
       meta: [
         {
           hid: 'author',
@@ -120,22 +123,18 @@ export default Vue.extend({
         {
           hid: 'description',
           name: 'description',
-          content:
-            convertDateToSimpleFormat(Data.lastUpdate) +
-            ' 更新：　' +
-            this.$tc(
-              '当サイトは新型コロナウイルス感染症 (COVID-19) に関する最新情報を提供するために、東京都が開設したものです。'
-            )
+          content: `${this.$t('{date} 更新', {
+            date: convertDateToSimpleFormat(Data.lastUpdate)
+          })}: ${this.$tc(
+            '当サイトは新型コロナウイルス感染症 (COVID-19) に関する最新情報を提供するために、東京都が開設したものです。'
+          )}`
         },
         {
           hid: 'og:site_name',
           property: 'og:site_name',
-          content:
-            this.$t('東京都') +
-            ' ' +
-            this.$t('新型コロナウイルス感染症') +
-            ' ' +
-            this.$t('対策サイト')
+          content: `${this.$t('東京都')} ${this.$t(
+            '新型コロナウイルス感染症'
+          )} ${this.$t('対策サイト')}`
         },
         {
           hid: 'og:url',
@@ -146,22 +145,18 @@ export default Vue.extend({
         {
           hid: 'og:title',
           property: 'og:title',
-          content:
-            this.$t('東京都') +
-            ' ' +
-            this.$t('新型コロナウイルス感染症') +
-            ' ' +
-            this.$t('対策サイト')
+          content: `${this.$t('東京都')} ${this.$t(
+            '新型コロナウイルス感染症'
+          )} ${this.$t('対策サイト')}`
         },
         {
           hid: 'og:description',
           property: 'og:description',
-          content:
-            convertDateToSimpleFormat(Data.lastUpdate) +
-            ' 更新：　' +
-            this.$tc(
-              '当サイトは新型コロナウイルス感染症 (COVID-19) に関する最新情報を提供するために、東京都が開設したものです。'
-            )
+          content: `${this.$t('{date} 更新', {
+            date: convertDateToSimpleFormat(Data.lastUpdate)
+          })}: ${this.$tc(
+            '当サイトは新型コロナウイルス感染症 (COVID-19) に関する最新情報を提供するために、東京都が開設したものです。'
+          )}`
         },
         {
           hid: 'og:image',
@@ -171,12 +166,9 @@ export default Vue.extend({
         {
           hid: 'apple-mobile-web-app-title',
           name: 'apple-mobile-web-app-title',
-          content:
-            this.$t('東京都') +
-            ' ' +
-            this.$t('新型コロナウイルス感染症') +
-            ' ' +
-            this.$t('対策サイト')
+          content: `${this.$t('東京都')} ${this.$t(
+            '新型コロナウイルス感染症'
+          )} ${this.$t('対策サイト')}`
         },
         {
           hid: 'twitter:image',
@@ -193,6 +185,10 @@ export default Vue.extend({
   max-width: 1440px;
   margin: 0 auto;
   background-color: inherit !important;
+}
+
+.v-application--wrap {
+  width: 100%;
 }
 
 .embed {
